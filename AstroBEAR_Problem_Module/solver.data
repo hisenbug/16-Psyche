@@ -1,0 +1,25 @@
+!================================================================================
+! AstroBEAR solver.data file.
+! Input data describing solver options.
+! Created for problem:  Template
+!================================================================================
+&SolverData
+	iScheme	= 1     ! Sweep = [1]
+	iSolver = 0     ! [0]-Default HLL Solver, 1-iExactRS, 2-HLLC, 3-HLL, 4-HLLC_ISO, 6-HLLD, 8-HLLD_ISO
+/
+
+&SweepData
+  InterpOrder = 1          ! Interpolation order 1-Piecewise constant, 2-Piecewise linear, [3]-Piecewise Parabolic
+  lChar_Limiters = .false.  ! Limit using characteristic variables instead of primitive? [.true.]
+  ViscCD = 0               ! [0] = NO_VISCOSITY, 1 = ROE_VISCOSITY, 2 = H_VISCOSITY
+  iTracer = 0              ! [0] = NONLAGRANGIAN, 1 = LAGRANGIAN
+  lCautious=.true.         ! Protect quantities throughout hyperbolic step [.true.]
+  lApplyDiffusion=.true.  ! Apply additional diffusion at converging flows [.true.]
+  DIFF_ALPHA = 0.0          ! Diffusion coefficient [.1]
+  lApplyLOF = .false.      ! Apply local oscillation filter (reduces carbuncles) [.false.]
+  LOF_ALPHA = .075         ! Strength of local oscillation filter. [.075]
+  lCTU=.true.              ! Use corner transport upwind?  [.true.]
+  lLimiter=.true.          ! Use additional slope limiters [.true.]
+  lUsePPML=.false.          ! Use PPML limiter to preserve 3rd order accuracy near maxima/minima for Piecewise Parabolic Method
+  DIFF_ALPHA2 = 20d4  		! Additional Aggressive Diffusion coefficient [6.5e4 of MaxLevel 4]
+/

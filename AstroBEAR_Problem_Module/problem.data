@@ -1,0 +1,37 @@
+&ProblemData
+	pos = 0,0,0       ! cu
+	rPlanet = 125     ! km [1000]
+	rP_b = 85		  ! km
+	rhoPlanet = 5e-14 ! g/cc
+	tPlanet = 1.24e-3 ! K
+	rhoAmb = 1000      ! particles/cc [30]
+	tAmb = 1e6        ! K [1e6]
+	rhoWind = 1000     ! particles/cc [300]
+	tWind = 1e6       ! K [1e6]
+	bWind = 100       ! nT [75]
+	bdir = 0, 1, 0 !0, 0.9961946980917455, 0.08715574274765817      ! Magnetic field direction [0,1,0]
+	vWind = 500       ! km/s
+	vAmb = 500        ! km/s
+	vxnorm = 1.0      ! Absorbing
+	vxnormR = 1.0     ! Reflecting Night side (-1)
+	criticalRes = -1 	! Calculated crudely if omitted
+	bodyRes = 100		! In SI (Ohm m) Computational Units = SI*9.74
+	ambRes = 1e-3	    ! Computational Units (Spitzer: 1d-5)
+	shellFrac = 0
+	shellResFrac = 1
+	coreFrac = 0
+	refFlag = 3		  	! Resistivity Structure [1]
+	wDir = 1,0,0
+	wAxis = 1
+	bAmb = 0,100,0		! nT
+	rwFlag = 0			! Non zero to ramp up/down 1) wind velocity, 2) Boundary Pressure, 3) Resistivity
+	tRamp = 0.1d0		! [4d0]
+	rExcl = 150d0		! (km) Make field 0 in this radius around planet center
+	rhoBoundary = 10 	! particles/cc [10]
+	tBoundary = 200   	! Kelvin
+	diff_alpha2_0 = 2.5d4 !
+	softZone = 3d0		! # of MaxLevl zones for softening resistivity
+	rAtm = 0d0			! Atmosphere height in km
+	rampstart = 7.0d0	!
+	ramptime = 0.01d0	! Ramping down time of DIFF_ALPHA2
+/

@@ -1,0 +1,140 @@
+!================================================================================
+! AstroBEAR physics.data file.
+! Input data describing built-in physics-related parameters of the code.
+! Created for problem:  Template
+! Default values for variables in [brackets]
+!================================================================================
+
+&EOSData
+!================================================================================
+! Equation of State stuff
+!================================================================================
+iEOS            = 0            ! Equation of State [0]-ideal gas, 1-MultiSpecies gas, 3-Van der Waals gas, 4-Isothermal, 5-Marshak Radiation Test
+gamma           = 1.66666666667d0   ! Adiabatic index used for ideal gas and Van der Waals gas [1.66666666667, 1.00001d0]
+IsoTemp         = 10d0         ! Isothermal temperature for Isothermal EOS
+CriticalDens    = 30.693677103 ! maximum density in Van der Waals EOS
+AttractionParam = 1.38d6       ! attraction pram in Van der Waals EOS
+Marshak_epsilon = .5           ! Ratio of Equilibrium Radiation energy density to thermal energy density
+/
+
+&AbundanceData
+!================================================================================
+! Abundance information
+! Define Xmu or set it to zero and it will be calculated from everything else.
+!================================================================================
+HeFrac = .084d0                ! Ratio of Helium Nuclei to Hydrogen Nuclei
+xH     = .01d0		       ! Ionization fraction of Hydrogenn
+xHe    = 0d0                   ! Ionization fraction of Helium (singly ionized)
+xHeII  = 0d0                   ! Ionization fraction of Helium (doubly ionized)
+ZFrac  = .00126d0              ! Ratio of Metal Nuclei to Hydrogen Nuclei
+xZ     = .001d0                ! Ionization fraction of metals
+Zmu    = 16d0                  ! Mean atomic mass of metals - (including electrons from ionized metals)
+Xmu    = 0d0                   ! Mean atomic mass of everything - (including all free electrons and nuclei)
+/
+
+&PhysicsData
+!================================================================================
+! Field based refinement control
+!================================================================================
+InterpOpts           = 1,1,1,1,1,0,0,0,1,1,1  ! [0]-constant, 1-minmod, 2-superbee, 3-vanLeer, 4-mc, 5-Parabolic (not conservative), 6-Linear (not limited).  It is recommended to use constant interpolation for any fields in q that correspond to aux fields (iBx, iBy, iBz, etc...) !
+refineVariableFactor = 1d0,1d0,1d0,1d0,1d0,1d0,1d0,1d0,1d0,1d0,1d0 ! weight factors for each field used in triggering refinement.  Combined with qtolerance for that level. [1d0]
+
+!================================================================================
+! Global source term switches
+!================================================================================
+iSelfGravity   = 0          ! [0]-No Self Gravity, 1-Momentumn Conserving SelfGravity, 2-Non momentum conserving self-gravity
+DefaultAccretionRoutine = 1 ! 0-No accretion, [1]-Federrath Accretion, [2]-Krumholz Accretion
+UniformGravity = 0d0        ! Gravitational acceleration in the -y direction [0d0]
+OmegaRot       = 0d0        ! Shifts to a rotating reference frame (enables coriolis and centripetal force terms)
+iCylindrical   = 0          ! [0]-No cylindrical geometry, 1-Cylindrical with no angular momentum, 2-Cylindrical with angular momentum
+iCooling       = 0          ! Cooling module [NoCool=0, AnalyticCool=1, DMCool=2, IICool=3, ZCool=4]
+FloorTemp      = 1d-10      ! Temperature at which to shut of cooling source terms
+SrcPrecision   = 1d-3       ! Relative precision desired for source terms.  [1d-3]
+lTrackHydrogen = .false.    ! Track Hydrogen ionization and recombination (Currently only works with iEOS=1 (MultiSpecies)
+lTrackHelium   = .false.    ! Track Helium ionization and recombination (Currently only works with iEOS=1 (MultiSpecies)
+
+!================================================================================
+! Density Protection Options
+!================================================================================
+lRestartOnDensityProtections = .false.  ! Do density protections trigger restarts?  [.false.]
+lTrackDensityProtections = .false.		! Track density protections [.false.]
+iDensityProtect  = 0                    ! 0-Set to MinDensity, 1-Set to minimum nearby density, [2]-Average nearby densities
+iMomentumProtect = 0                    ! 0-Conserve momentum, 1-Set to zero, [2]-Average nearby velocities
+MinDensity       = 1d1                 ! Minimum computational density before protection is triggered [1d-10]
+
+!================================================================================
+! Pressure Protection Options
+!================================================================================
+lRestartOnPressureProtections = .false. ! Do pressure protections trigger restarts? [.false.]
+lTrackPressureProtections = .false.		! Track pressure protections [.false.]
+iPressureProtect = 0                    ! 0-Set to MinTemp, 1-Set to minimim nearby pressure, [2]-Set to average nearby pressure, 3-Set to minimum nearby temperature, 4-Set to average nearby temperature
+MinTemp          = 1d1	            ! [1d-10] minimum allowed temperature for the system in Kelvin before protection is triggered
+
+!================================================================================
+! Other Protection Options
+!================================================================================
+lRestartOnHypreMaxIters = T             ! Restart steps if hypre does not converge
+
+!================================================================================
+! Description of various scaling parameters
+! Define lScale and one of [nScale, rScale], and one of [TimeScale, TempScale, or pScale].  Other combinations are possible - as long as the scales are consistent with each other.
+!================================================================================
+nScale          =       1d0,              ! number density scale parameter [particles/cc]
+rScale          =       0d0, 	          ! density scale [g/cc]
+TimeScale       =       0d0,              ! time scale  [s] (day=8.64d4, yr=3.1556926d7
+TempScale       =       1d0,              ! temperature scale parameter [Kelvin]
+pScale          =       0d0,              ! pressure scale [dynes/cm^2]
+lScale          =       1d5,              ! length scale parameter [cm] (AU=1.49598e13, pc=3.08568025e18, R_sun=6.955e10
+
+!================================================================================
+! MHD related section
+!================================================================================
+lMHD             =  .true.      ! Magnetic Fields present? [.false.] //changed
+lCheckDivergence =  .true.      ! Turn on divergence checking [.false.]
+
+!================================================================================
+! Resistivity switches
+!================================================================================
+lResistive     = .true.     ! Turns on resistivity [.false.]
+ResType        = 2           ! Resistivity type. 1-constant, 2-user defined distribution, 3-Spitzer. [1]
+resistivity    = 1d1      ! resistivity value [0d0]
+
+!================================================================================
+! Explicit Conductivity switches
+!================================================================================
+lConductive    = .false.      ! Turns on mhd heat conduction [.false.]
+ConType        = 1           ! Conduction type. 1-constant, 2-Spitzer. [1]
+conductivity   = 8d-2        ! conductivity value [0d0]
+lThermalFluxLimiter= .false. ! Turns on saturation heat flux. (only works for ConType==2). [.false.]
+lIsoDiff       = .false.     ! Turns on isotropic heat conduction. Allows isotropicity to be in the range (0,1). [.false.]
+
+!================================================================================
+! Implicit Thermal Diffusion switches
+!================================================================================
+iDiffusion = 0    ! [0]-No diffusion, [1]-Thermal diffusion
+kappa1     = 1d0  ! Heat diffusion coefficient
+flb        = 0d0  ! boundary flux
+ndiff      = 2.5  ! Temperature power
+diffcfl    = .01  ! Relative Temperature change allowed per subcycle
+
+!================================================================================
+! Viscosity switches
+!================================================================================
+lViscous       = .false.     ! Turns on viscosity (2D only) [.false.]
+VisType        = 1           ! viscosity type. 1-classic, 2-Braginskii [1]
+bviscosity     = 0d0         ! viscosity value [0d0]
+
+!================================================================================
+! Radiation Transfer switches
+!================================================================================
+iRadiation               = 0   ! [0]-No radiation, 1-Diffusion and energy exchange only, 2-Radiation Advection terms included as well
+RadLimiter               = 1   ! [0]-LP_FLUX_LIMITER, 1-Diffusion limit, 2-Free streaming limit
+PlanckOpacityType        = 0   ! [0]-Constant Specific Opacity (k=A*d), [1]-Power Law Opacity (k=A*d^B*T^C)
+RoselandOpacityType      = 0   ! [0]-Constant Specific Opacity (k=A*d), [1]-Power Law Opacity (k=A*d^B*T^C)
+PlanckSpecificOpacity    = 1d0 ! Specific Planck Opacity [1d0] (A)
+RoselandSpecificOpacity  = 1d0 ! Specific Roseland Opacity [1d0] (A)
+Roseland_dpow            = 1d0 ! Density Power for Roseland Opacity [1d0] (B)
+Roseland_tpow            = 0d0 ! Temperature Power for Roseland Opacity [0d0] (C)
+Planck_dpow              = 1d0 ! Density Power for Planck Opacity [1d0] (B)
+Planck_tpow              = 0d0 ! Temperature Power for Planck Opacity [0d0] (C)
+/

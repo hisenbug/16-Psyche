@@ -1,0 +1,117 @@
+!============================================================================================
+! AstroBEAR global.data File
+! Global parameters, Contains GlobalData and LevelData and PoissonData namelists.
+! Configured for:  Template
+! Default values for variables in [brackets]
+!============================================================================================
+
+&GlobalData
+
+!=============================================================================================
+! Parameters Related to Space
+!=============================================================================================
+nDim     = 3  				! number of dimensions for this problem (1-3) [3 initially]
+GmX      = 48,48,48 		! Base grid resolution [x,y,z] [12,16,12] [512,512,96]
+MaxLevel = 4        		    	! Maximum level for this simulation (0 is fixed grid) [4]
+LastStaticLevel = -1                    ! Use static AMR for levels through LastStaticLevel [-1] ??
+GxBounds = -500d0,-1500d0,-1500d0,2500d0,1500d0,1500d0 	! Problem boundaries in computational units,format: [-2000d0,-4000d0,-750d0,6000d0,4000d0,750d0]
+                                        ! (xlower, ylower, zlower, xupper, yupper, zupper) [6000d0]
+	   				! For 2D problems, set zlower and zupper to 0.d0.
+
+Gmthbc   = 1,1,1,1,1,1			! Sets the physical boundary conditions at the edge of the problem domain
+              				! format:  (x1, y1, z1, x2, y2, z2) [z1 was 3]
+             				! 1-Extrapolated,
+                                        ! 2-Periodic,
+            				! 3-ReflectingWall (Field lines do not penetrate)
+              				! 4-Reflect_BParallel (Field lines held normal
+	      				! 5-Reflect_Cylindrical (Like reflect wall, but also changes sign of phi
+					!                        components of velocity and magnetic fields)
+lRegrid=.false.
+
+!=============================================================================================
+! Parameters Related to Time and output
+!=============================================================================================
+start_time        = 0d0       		! The initial time in computational units [0d0]. Do NOT change this on restarts.
+final_time     	  = 100d0      		! The final time in computational units. [4]
+final_frame    	  = 625	         	! The final frame [20] [1000]
+lRestart       	  = T            	! restart flag [F]
+lPostProcess   	  = F            	! Post Process (preempts lrestart) [F]
+restart_frame = -1    !The frame from which restarts should begin (-1 sets restart from last chombo dump). Read only if lRestart or lPostProcess = .true.
+initial_maxspeed  = 100000.d0   		! A lower bound on the initial maximum wave speed in computational units.
+cfl_vars          = 1, .2, .5		! Maximum allowed CFL before restarting step, desired CFL to run at, relaxation parameter.  Smaller numbers give more gradual relaxation [1, .3, .5]
+iDataFileType     = 0                   ! Type of output: 0 is chombo, 1 is BOV, & 2 is curve files (1D fixed grid only) [0]
+lParallelHDF5     = F
+
+!=============================================================================================
+! Parameters Related to Performance/Algorithms
+!=============================================================================================
+lSkipProfile		= T	  		        ! Flag for skipping profiling [T] - should set this to false for good performance on production runs.
+lUseOriginalNewSubGrids = F	 			! T for Old Subgrid Algo, F for New Subgrid Algo. [F]
+MinimumGridPoints       = 2            	! The minimum number of cells a grid can have along one dimension [2] (ignored unless lUseOriginalNewSubGrids=T).
+iThreaded         	= -1           		! -1 is non-threaded, 0 is pseudo-threaded, 1 is threaded [0].  If you are using threaded you must compile with pThreadFlag=2
+LevelBalance      	= 0d0,0d0       		! Try to balance load on every level? [0d0,0d0]
+
+
+!=============================================================================================
+! Parameters Related to Testing/Debugging
+!=============================================================================================
+
+lTest                   = F     ! Use testing objects to compare results with reference data [F]
+lTimingLog              = F     ! Output log showing timing information [F]
+lStressTest             = F     ! Used to manually configure AMR patches and produce random fluxes and divergence [F]
+lSkipHydro              = F     ! Used if you want to turn of hydrodynamics and just see results of multi-physics (diffusion, radtransfer, etc...) [F]
+/
+
+!============================================================================================
+!Level-specific variables (All LevelData lists should be initialized from 0 to MaxLevel).
+!============================================================================================
+
+&LevelData
+qTolerance      	= 1d30,1d30,1d30,1d30,1d30,.10,.10,.10  	! field variable tolerances on each level
+DesiredFillRatios 	= .90,.90,.90,.90,.70,.70,.70,.70  	! Determines how much of the new subgrids must be filled with refined cells (also ignored unless lUseOriginalNewSubGrids=T)
+buffers                 = 4 4 4 4 4 4 4 4                       ! Number of zones to buffer ghost cells
+/
+
+
+!============================================================================================
+!Variables used for self gravity module
+!============================================================================================
+
+&PoissonData
+solver 			= 1		! Which solver to use for linear system solve? StructPCG=1, StructGMRes=2 [1]
+tolerance 		= 1e-6		! Solver convergence tolerance [1e-6]
+printlevel 		= 0		! Sets print level for hypre solver.  Increasing this will make solvers more verbose. [0]
+MaxIters 		= 1000		! Maximum number of iterations to attempt convergence.  [1000]
+hverbosity 		= 0		! Anything > 0 will cause linear systems to be outputted as matrix, rhs, lhs files. [0]
+mthbc 			= 2 2 2 2 2 2	! What type of boundary conditions to use for gravitational potential
+              				! format:  (x1, y1, z1, x2, y2, z2)
+					! 0-Zero Slope,
+             				! 1-Reflecting,
+                                        ! 2-Periodic,
+            				! 3-Multipole Expansion,
+              				! 4-User Specified (User is reponsible for setting Phi at physical boundaries)
+/
+
+!============================================================================================
+!Variables used for radiative transfer module
+!============================================================================================
+
+&RadTransferData
+solver 			= 1		! Which solver to use for linear system solve? StructPCG=1, StructGMRes=2, StructSMG=3 [1]
+tolerance 		= 1e-6		! Solver convergence tolerance [1e-6]
+printlevel 		= 0		! Sets print level for hypre solver.  Increasing this will make solvers more verbose. [0]
+MaxIters 		= 1000		! Maximum number of iterations to attempt convergence.  [1000]
+hverbosity 		= 0		! Anything > 0 will cause linear systems to be outputted as matrix, rhs, lhs files. [0]
+mthbc 			= 3 3 3 3 3 3	! What type of boundary conditions to use for gravitational potential
+              				! format:  (x1, y1, z1, x2, y2, z2)
+					! 0-Free Streaming,
+             				! 1-Extrapolated,
+                                        ! 2-Periodic
+            				! 3-Reflecting
+              				! 4-User defined boundary
+              				! 5-User defined radiative flux
+RadFlux                 = 0d0           ! User defined radiative flux used for mthbc 5
+Crankiness              = 0             ! parameter that adjusts from backward euler (0) to crank-nicholson(1) time stepping.  (2 is forward euler but nothing over 1 should be used - and 0 should be more stable but less accurate)
+cfl_rad                 = .01		! Fractional change in temperature allowed before recalculating source function
+MaxSubCycles            = 1000          ! Maximum number of sub-cycles to allow.  May result in increase in cfl_rad.
+/
